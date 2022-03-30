@@ -1,2 +1,0 @@
-print("dziala")
-print("zmiana")
