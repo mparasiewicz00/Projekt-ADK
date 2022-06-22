@@ -5,14 +5,19 @@ from PyQt6.QtCore import QCoreApplication
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QFileDialog
 import wfdb
+import EKG
 
 
 class Ui_Preprocessing_ECG(object):
 
     def getFiles(self):
+        global fname
         fname = QFileDialog.getOpenFileName()
-        record = wfdb.rdrecord(fname, channels=[0])
+        print(fname)
 
+    def readEcg(self):
+        record = wfdb.rdrecord(fname, channels=[0], sampfrom=0)
+        wfdb.plot_wfdb(record=record, title='Sygnał wejściowy')
 
 
     def setupUi(self, Preprocessing_ECG):
