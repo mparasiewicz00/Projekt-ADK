@@ -54,6 +54,7 @@ class Ui_MainWindow(object):
         self.graphicsView.setScene(self.scene)
 
 
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
