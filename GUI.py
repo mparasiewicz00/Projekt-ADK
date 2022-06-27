@@ -15,6 +15,22 @@ from PyQt6.QtCore import QCoreApplication
 from scipy.signal import firwin
 from scipy.signal import freqz
 from scipy.signal import filtfilt
+import ICG
+
+
+# class mymainwindow(QtGui.QMainWindow): # <- from program 2
+#     def __init__(self):
+#         QtGui.QMainWindow.__init__(self, None, QtCore.Qt.WindowStaysOnTopHint)
+#         .
+#         .
+#         myQDialog = QtGui.QDialog() # <- from program 1
+#         ui = Ui_Dialog()            # <- from program 1
+#         ui.setupUi(myQDialog)       # <- from program 1
+#         .
+#         .
+#         self.setCentralWidget(myQDialog) # <- from program 1 into 2
+#         .
+#         .
 
 
 class Ui_MainWindow(object):
