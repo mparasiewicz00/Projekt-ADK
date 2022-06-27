@@ -17,8 +17,6 @@ from scipy.signal import freqz
 from scipy.signal import filtfilt
 
 
-
-
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -29,15 +27,7 @@ class Ui_MainWindow(object):
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(30, 60, 121, 41))
         self.pushButton.setObjectName("pushButton")
-        self.radioButton_1 = QtWidgets.QRadioButton(self.centralwidget)
-        self.radioButton_1.setGeometry(QtCore.QRect(30, 160, 121, 41))
-        self.radioButton_1.setObjectName("radioButton_1")
-        self.radioButton_2 = QtWidgets.QRadioButton(self.centralwidget)
-        self.radioButton_2.setGeometry(QtCore.QRect(30, 210, 121, 41))
-        self.radioButton_2.setObjectName("radioButton_2")
-        self.radioButton_3 = QtWidgets.QRadioButton(self.centralwidget)
-        self.radioButton_3.setGeometry(QtCore.QRect(30, 110, 121, 41))
-        self.radioButton_3.setObjectName("radioButton_3")
+
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_5.setGeometry(QtCore.QRect(30, 310, 121, 41))
         self.pushButton_5.setObjectName("pushButton_5")
@@ -57,14 +47,23 @@ class Ui_MainWindow(object):
         self.pushButton_10.setGeometry(QtCore.QRect(840, 490, 121, 41))
         self.pushButton_10.setObjectName("pushButton_10")
 
+        self.radioButton_1 = QtWidgets.QRadioButton(self.centralwidget)
+        self.radioButton_1.setGeometry(QtCore.QRect(30, 160, 121, 41))
+        self.radioButton_1.setObjectName("radioButton_1")
+        self.radioButton_2 = QtWidgets.QRadioButton(self.centralwidget)
+        self.radioButton_2.setGeometry(QtCore.QRect(30, 210, 121, 41))
+        self.radioButton_2.setObjectName("radioButton_2")
+        self.radioButton_3 = QtWidgets.QRadioButton(self.centralwidget)
+        self.radioButton_3.setGeometry(QtCore.QRect(30, 110, 121, 41))
+        self.radioButton_3.setObjectName("radioButton_3")
+
         self.graphicsView = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView.setGeometry(QtCore.QRect(160, 60, 800, 420))
         self.graphicsView.setObjectName("graphicsView")
         self.scene = QtWidgets.QGraphicsScene()
         self.graphicsView.setScene(self.scene)
 
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(30, 245, 121, 21))
+
         self.valueNQ = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.valueNQ.setGeometry(QtCore.QRect(30, 260, 121, 21))
         self.valueNQ.setObjectName("valueNQ")
@@ -104,6 +103,9 @@ class Ui_MainWindow(object):
         imp = np.gradient(imp)
         b, a = scipy.signal.butter(3, nq, passType)
         ekg = scipy.signal.filtfilt(b, a,  imp)
+        data["ECG"] = ekg
+
+        self.data = data
         figure = Figure()
         ax2 = figure.gca()
         x = list(np.arange(1, len(ekg) + 1))
@@ -124,7 +126,14 @@ class Ui_MainWindow(object):
         elif self.radioButton_2.isChecked():
             self.loadFile(self.path, 'highpass', nq)
 
+
+    def csvSave(self):
+        filename = 'afterPostProc' + self.path[-8:-4] + '.csv'
+        headerList = ['ECG', 'IMP', 'Z0']
+        self.data.to_csv(filename, header=headerList, index=False)
+
     def retranslateUi(self, MainWindow):
+        self.data = []
         self.path = ''
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "EKG Preprocessing"))
@@ -136,6 +145,7 @@ class Ui_MainWindow(object):
         self.pushButton_5.setText(_translate("MainWindow", "Wizualizacja"))
         self.pushButton_5.clicked.connect(self.plotECG)
         self.pushButton_6.setText(_translate("MainWindow", "Zapisz wynik"))
+        self.pushButton_6.clicked.connect(self.csvSave)
         self.pushButton_7.setText(_translate("MainWindow", "Krew"))
         self.pushButton_8.setText(_translate("MainWindow", "EKG"))
         self.pushButton_9.setText(_translate("MainWindow", "ICG"))
