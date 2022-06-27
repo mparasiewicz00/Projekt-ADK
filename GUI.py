@@ -1,12 +1,22 @@
 #Mateusz Parasiewicz WME19BC1S1
+import csv
+import os
+import matplotlib.pyplot as mtpl
 import scipy.signal
 import pandas as pd
 import numpy as np
+from PyQt5.QtCore import QDir
 from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtWidgets import QFileDialog
+from PyQt6.uic.properties import QtGui
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt6.QtCore import QCoreApplication
+from scipy.signal import firwin
+from scipy.signal import freqz
+from scipy.signal import filtfilt
+
+
 
 
 class Ui_MainWindow(object):
@@ -19,17 +29,17 @@ class Ui_MainWindow(object):
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(30, 60, 121, 41))
         self.pushButton.setObjectName("pushButton")
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(30, 110, 121, 41))
-        self.pushButton_2.setObjectName("pushButton_2")
         self.radioButton_1 = QtWidgets.QRadioButton(self.centralwidget)
         self.radioButton_1.setGeometry(QtCore.QRect(30, 160, 121, 41))
         self.radioButton_1.setObjectName("radioButton_1")
         self.radioButton_2 = QtWidgets.QRadioButton(self.centralwidget)
         self.radioButton_2.setGeometry(QtCore.QRect(30, 210, 121, 41))
         self.radioButton_2.setObjectName("radioButton_2")
+        self.radioButton_3 = QtWidgets.QRadioButton(self.centralwidget)
+        self.radioButton_3.setGeometry(QtCore.QRect(30, 110, 121, 41))
+        self.radioButton_3.setObjectName("radioButton_3")
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_5.setGeometry(QtCore.QRect(30, 260, 121, 41))
+        self.pushButton_5.setGeometry(QtCore.QRect(30, 310, 121, 41))
         self.pushButton_5.setObjectName("pushButton_5")
         self.pushButton_6 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_6.setGeometry(QtCore.QRect(710, 490, 121, 41))
@@ -53,11 +63,21 @@ class Ui_MainWindow(object):
         self.scene = QtWidgets.QGraphicsScene()
         self.graphicsView.setScene(self.scene)
 
-
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(30, 245, 121, 21))
+        self.valueNQ = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        self.valueNQ.setGeometry(QtCore.QRect(30, 260, 121, 21))
+        self.valueNQ.setObjectName("valueNQ")
+        self.valueNQ.decimals()
+        self.valueNQ.setMaximum(0.99)
+        self.valueNQ.setMinimum(0.01)
+        self.valueNQ.setSingleStep(0.01)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+
 
     def insertData(self):
         filename = QFileDialog.getOpenFileName()
@@ -65,41 +85,44 @@ class Ui_MainWindow(object):
         self.path = path
         data = pd.read_csv(path)
         imp = data["ECG"]
-        ekg = imp
+        ekg = np.gradient(imp)
         figure = Figure()
-        axes = figure.gca()
+        ax1 = figure.gca()
         x = list(np.arange(1, len(ekg) + 1))
         y = np.array(ekg)
-        axes.plot(x, y, "-k", label="EKG")
-        axes.legend()
-        axes.grid(True)
+        ax1.plot(x, y, "-k", label="EKG")
+        ax1.legend()
+        ax1.grid(True, color='black', linewidth='0.2')
 
         canvas = FigureCanvas(figure)
-        canvas.resize(3000, 400)
+        canvas.resize(1500, 400)
         self.scene.addWidget(canvas)
 
-    def loadFile(self, name, passType):
+    def loadFile(self, name, passType, nq):
         data = pd.read_csv(f'{name}')
         imp = data["ECG"]
-        b, a = scipy.signal.butter(3, 0.1, passType)
-        ekg = scipy.signal.filtfilt(b, a, imp)
+        imp = np.gradient(imp)
+        b, a = scipy.signal.butter(3, nq, passType)
+        ekg = scipy.signal.filtfilt(b, a,  imp)
         figure = Figure()
-        axes = figure.gca()
+        ax2 = figure.gca()
         x = list(np.arange(1, len(ekg) + 1))
         y = np.array(ekg)
-        axes.plot(x, y, "-k", label="first one")
-        axes.legend()
-        axes.grid(True)
+        ax2.plot(x, -y, "-k", label="Filtered")
+        ax2.legend()
+        ax2.grid(True, color='black', linewidth='0.2')
 
         canvas = FigureCanvas(figure)
         canvas.resize(1500, 450)
         self.scene.addWidget(canvas)
 
     def plotECG(self):
+        nq = self.valueNQ.text()
+        nq = float(nq.replace(',', '.'))
         if self.radioButton_1.isChecked():
-            self.loadFile(self.path, 'lowpass')
+            self.loadFile(self.path, 'lowpass', nq)
         elif self.radioButton_2.isChecked():
-            self.loadFile(self.path, 'highpass')
+            self.loadFile(self.path, 'highpass', nq)
 
     def retranslateUi(self, MainWindow):
         self.path = ''
@@ -107,9 +130,9 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "EKG Preprocessing"))
         self.pushButton.setText(_translate("MainWindow", "Wprowadz dane"))
         self.pushButton.clicked.connect(self.insertData)
-        self.pushButton_2.setText(_translate("MainWindow", "Wejsciowy sygnal"))
-        self.radioButton_1.setText(_translate("MainWindow", "Low pass"))
-        self.radioButton_2.setText(_translate("MainWindow", "High pass"))
+        self.radioButton_1.setText(_translate("MainWindow", "Lowpass"))
+        self.radioButton_2.setText(_translate("MainWindow", "Highpass"))
+        self.radioButton_3.setText(_translate("MainWindow", "Input signal"))
         self.pushButton_5.setText(_translate("MainWindow", "Wizualizacja"))
         self.pushButton_5.clicked.connect(self.plotECG)
         self.pushButton_6.setText(_translate("MainWindow", "Zapisz wynik"))
