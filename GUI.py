@@ -12,7 +12,7 @@ from PyQt6.QtCore import QCoreApplication
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1000, 600)
+        MainWindow.resize(1000, 550)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
 
@@ -32,19 +32,19 @@ class Ui_MainWindow(object):
         self.pushButton_5.setGeometry(QtCore.QRect(30, 260, 121, 41))
         self.pushButton_5.setObjectName("pushButton_5")
         self.pushButton_6 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_6.setGeometry(QtCore.QRect(620, 490, 121, 41))
+        self.pushButton_6.setGeometry(QtCore.QRect(710, 490, 121, 41))
         self.pushButton_6.setObjectName("pushButton_6")
         self.pushButton_7 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_7.setGeometry(QtCore.QRect(30, 0, 121, 41))
+        self.pushButton_7.setGeometry(QtCore.QRect(30, 10, 121, 41))
         self.pushButton_7.setObjectName("pushButton_7")
         self.pushButton_8 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_8.setGeometry(QtCore.QRect(150, 0, 121, 41))
+        self.pushButton_8.setGeometry(QtCore.QRect(160, 10, 121, 41))
         self.pushButton_8.setObjectName("pushButton_8")
         self.pushButton_9 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_9.setGeometry(QtCore.QRect(270, 0, 121, 41))
+        self.pushButton_9.setGeometry(QtCore.QRect(290, 10, 121, 41))
         self.pushButton_9.setObjectName("pushButton_9")
         self.pushButton_10 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_10.setGeometry(QtCore.QRect(760, 490, 121, 41))
+        self.pushButton_10.setGeometry(QtCore.QRect(840, 490, 121, 41))
         self.pushButton_10.setObjectName("pushButton_10")
 
         self.graphicsView = QtWidgets.QGraphicsView(self.centralwidget)
